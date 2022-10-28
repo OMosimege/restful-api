@@ -19,4 +19,4 @@ USER appuser
 COPY . /home/appuser
 
 ENTRYPOINT [ "python" ]
-CMD ["mysite/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["weather/manage.py", "runserver", "0.0.0.0:8000"]
