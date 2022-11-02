@@ -1,22 +1,23 @@
-FROM python:3.9-slim-buster
+FROM python:3.7-alpine
 LABEL author="Onalerona"
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install security updates:
-RUN apt-get update && apt-get -y upgrade
+COPY ./requirements.txt /requirements.txt
+RUN apk add --update --no-cache postgresql-client jpeg-dev
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+      gcc libc-dev linux-headers postgresql-dev musl-dev zlib zlib-dev
+RUN pip install -r /requirements.txt
+RUN apk del .tmp-build-deps
 
-WORKDIR /home/appuser
+RUN mkdir /app
+WORKDIR /app
+COPY ./app /app
 
-COPY requirements.txt /home/appuser
-RUN pip install -r requirements.txt
-
-# Run as non-root user:
-RUN useradd --create-home appuser
-USER appuser
-
-COPY . /home/appuser
-
-ENTRYPOINT [ "python" ]
-CMD ["weather/manage.py", "runserver", "0.0.0.0:8000"]
+RUN mkdir -p /vol/web/media
+RUN mkdir -p /vol/web/static
+RUN adduser -D user
+RUN chown -R user:user /vol/
+RUN chmod -R 755 /vol/web
+USER user

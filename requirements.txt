@@ -1,3 +1,4 @@
-Django==4.0
-djangorestframework==3.14.0
+Django>=2.2.15,<2.3.0
+djangorestframework>=3.10.3,<3.11
 factory-boy==2.0.1
+psycopg2>=2.7.5,<2.8.0
